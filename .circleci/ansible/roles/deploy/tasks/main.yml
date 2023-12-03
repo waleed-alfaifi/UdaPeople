@@ -1,0 +1,37 @@
+- name: Install zip
+  become: true
+  apt:
+    name: zip
+    state: present
+- name: Unzip backend folder
+  unarchive:
+    src: ~/project/backend.zip
+    dest: ~/
+- name: Install backend dependencies
+  shell: /bin/bash -l -c "cd backend && npm install"
+- name: Copy script.sh file to home
+  copy:
+    src: ~/project/script.sh
+    dest: ~/
+    mode: 0755
+- name: Make script.sh executable
+  shell: chmod +x ~/script.sh
+- name: Create a systemd service
+  become: true
+  template:
+    src: ~/project/backend.service
+    dest: /etc/systemd/system/backend.service
+- name: Reload systemd
+  become: true
+  systemd:
+    daemon_reload: yes
+- name: Enable backend service
+  become: true
+  systemd:
+    name: backend
+    enabled: yes
+- name: Start backend service
+  become: true
+  systemd:
+    name: backend
+    state: started

@@ -1,0 +1,62 @@
+- name: Install Node.js using Snap
+  snap:
+    name: node
+    classic: yes
+    channel: 13/stable
+- name: Print Node.js version
+  command: node -v
+  register: node_version
+- debug:
+    msg: "Node.js version is {{ node_version.stdout }}"
+- name: Print npm version
+  command: npm -v
+  register: npm_version
+- debug:
+    msg: "npm version is {{ npm_version.stdout }}"
+# Download Node Exporter binaries
+- name: Download Node Exporter binaries
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /tmp/node_exporter-1.0.1.linux-amd64.tar.gz
+    mode: 0755
+# Extract Node Exporter binaries
+- name: Extract Node Exporter binaries
+  unarchive:
+    src: /tmp/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+    creates: /tmp/node_exporter-1.0.1.linux-amd64
+# Move Node Exporter binaries to /usr/local/bin
+- name: Copy Node Exporter binaries to /usr/local/bin
+  copy:
+    src: /tmp/node_exporter-1.0.1.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    mode: 0755
+# Create node_exporter user
+- name: Create node_exporter user
+  user:
+    name: node_exporter
+    comment: Node Exporter
+    shell: /bin/false
+    system: yes
+# Create node_exporter service
+- name: Create node_exporter service
+  become: true
+  template:
+    src: ~/project/node-exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+# enable and start node_exporter service
+- name: enable and start node_exporter service
+  become: true
+  systemd:
+    name: node_exporter
+    enabled: yes
+    state: started
+# debug node_exporter service
+- name: debug node_exporter service
+  become: true
+  command: systemctl status node_exporter
+  register: node_exporter_service
+- debug:
+    msg: "{{ node_exporter_service.stdout }}"

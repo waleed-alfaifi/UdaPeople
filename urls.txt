@@ -1,0 +1,14 @@
+Public Url to GitHub repository (not private) [URL01]
+https://github.com/waleed-alfaifi/UdaPeople
+
+Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
+http://udapeople-421b116.s3-website-us-east-1.amazonaws.com
+
+CDN URL
+http://d1xtjxghmewbn4.cloudfront.net/
+
+Screenshots
+./screenshots
+
+Presentation
+./presentation.pdf

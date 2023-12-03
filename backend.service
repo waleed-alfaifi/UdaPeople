@@ -1,0 +1,13 @@
+[Unit]
+Description=backend
+After=syslog.target network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/home/ubuntu/script.sh
+User=root
+
+[Install]
+WantedBy=multi-user.target

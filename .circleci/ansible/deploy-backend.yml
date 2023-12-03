@@ -1,0 +1,73 @@
+---
+
+- name: "configuration play." 
+  hosts: web
+  user: ubuntu
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - ansible_host_key_checking: false
+    - ansible_stdout_callback: yaml
+  # write a pre task to get env from controller and write to /etc/environment
+  environment: 
+    PATH: /snap/bin:{{ ansible_env.PATH }}
+
+  pre_tasks:
+    - name: Basic usage
+      debug:
+        msg: "'{{ lookup('ansible.builtin.env', 'HOME') }}' is the HOME environment variable."
+    - name: Add PGSSLMODE=require to /etc/environment
+      become: true
+      lineinfile: 
+        path: /etc/environment
+        line: PGSSLMODE="require"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_CONNECTION="{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_ENTITIES="{{ lookup('env', 'TYPEORM_ENTITIES') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_HOST="{{ lookup('env', 'TYPEORM_HOST') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_PORT="{{ lookup('env', 'TYPEORM_PORT') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_USERNAME="{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_PASSWORD="{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_DATABASE="{{ lookup('env', 'TYPEORM_DATABASE') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_MIGRATIONS="{{ lookup('env', 'TYPEORM_MIGRATIONS') }}"
+    - name: Add variable to /etc/environment
+      become: true
+      lineinfile:
+        path: /etc/environment
+        line: TYPEORM_MIGRATIONS_DIR="{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR') }}"
+    
+
+
+  roles:
+    - deploy
